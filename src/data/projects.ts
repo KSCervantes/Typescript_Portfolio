@@ -4,14 +4,14 @@ export const projects = [
   {
     title: "Portfolio Website",
     description: "A modern personal portfolio built with React and Tailwind.",
-    link: "https://github.com/Kyleeestone/kylestone-portfolio",
+    link: "#",
     technologies: ["React", "EmailJS", "Tailwind CSS"],
     image: portfolioImage,
   },
   {
     title: "Community Bulletin App (SOON.....)",
     description: "Simple community bulletin app for posting and viewing announcements.",
-    link: "https://github.com/Kyleeestone",
+    link: "#",
     technologies: ["Flutter", "Supabase", "Firebase"],
     image: todoImage,
   },
