@@ -100,7 +100,7 @@ export default function Hero() {
               Get in Touch
             </a>
             <a
-              href=".public/Kyle s. Cervantes (3).pdf"
+              href="/Kyle s. Cervantes (3).pdf"
               download="Kyle_Cervantes_Resume.pdf"
               className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-all duration-300 text-white flex items-center justify-center gap-3 text-sm sm:text-base shadow-lg shadow-black/20"
             >
