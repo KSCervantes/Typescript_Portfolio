@@ -1,341 +1,318 @@
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+
+// Import the separated skill data
+import { techExpertise, techCategories } from "../data/technicalSkills";
+import { softSkills } from "../data/softSkills";
 
 export default function About() {
+  const [activeCategory, setActiveCategory] = useState("all");
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2,
-        duration: 0.5
+        staggerChildren: 0.15,
+        duration: 0.7
       }
     }
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 25, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.5 }
+      transition: { duration: 0.5, ease: "easeOut" }
     }
   };
 
-  // Soft skills data
-  const softSkills = [
-    { name: "Leadership", percentage: 60 },
-    { name: "Teamwork", percentage: 92 },
-    { name: "Communication", percentage: 50 },
-    { name: "Problem Solving", percentage: 50 }
-  ];
-
-  // Technical expertise data
-  const techExpertise = [
-    { name: "Flutter", category: "frontend", color: "bg-blue-500" },
-    { name: "React", category: "frontend", color: "bg-blue-400" },
-    { name: "JavaScript", category: "frontend", color: "bg-yellow-400" },
-    { name: "HTML", category: "frontend", color: "bg-orange-500" },
-    { name: "Tailwind CSS", category: "frontend", color: "bg-teal-500" },
-    { name: "Python", category: "backend", color: "bg-green-500" },
-    { name: "PHP", category: "backend", color: "bg-indigo-500" },
-    { name: "MySQL", category: "database", color: "bg-blue-600" },
-    { name: "Firebase", category: "database", color: "bg-yellow-500" },
-    { name: "Supabase", category: "database", color: "bg-emerald-500" }
-  ];
+  // Filter tech expertise based on active category
+  const filteredTech = activeCategory === "all"
+    ? techExpertise
+    : techExpertise.filter(tech => tech.category === activeCategory);
 
   return (
-    <section id="about" className="py-24 bg-gradient-to-r from-gray-900 via-blue-950 to-black text-white relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden opacity-5 pointer-events-none">
-        <motion.h1
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 0.1, scale: 1 }}
-          transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
-          className="text-9xl md:text-[20rem] font-bold text-gray-700 select-none absolute -right-20 top-1/4"
-        >
-          RESUME
-        </motion.h1>
-      </div>
+    <section id="about" className="py-16 sm:py-32 bg-gradient-to-b from-gray-900 to-black text-white relative overflow-hidden">
+      {/* Enhanced background elements - similar to Hero section */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Gradient grid background */}
+        <div className="absolute inset-0 bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] bg-[size:50px_50px] opacity-20"></div>
 
-      {/* Decorative elements - Using blue tones like the hero section */}
-      <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-blue-500 blur-[100px] opacity-20"></div>
-      <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-indigo-600 blur-[120px] opacity-10"></div>
+        {/* Animated gradient blobs */}
+        <motion.div
+          animate={{
+            y: [0, -30, 0],
+            x: [0, 20, 0],
+            scale: [1, 1.1, 1],
+            opacity: [0.3, 0.5, 0.3]
+          }}
+          transition={{ duration: 15, repeat: Infinity, repeatType: "reverse" }}
+          className="absolute top-1/4 left-1/5 w-64 md:w-96 h-64 md:h-96 rounded-full bg-gradient-to-br from-blue-600/20 to-blue-400/10 blur-3xl"
+        ></motion.div>
+
+        <motion.div
+          animate={{
+            y: [0, 40, 0],
+            x: [0, -30, 0],
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.4, 0.2]
+          }}
+          transition={{ duration: 18, repeat: Infinity, repeatType: "reverse" }}
+          className="absolute bottom-1/3 right-1/4 w-80 md:w-[30rem] h-80 md:h-[30rem] rounded-full bg-gradient-to-tr from-indigo-700/20 to-violet-500/10 blur-3xl"
+        ></motion.div>
+      </div>
 
       <motion.div
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true }}
+        viewport={{ once: true, margin: "-100px" }}
         variants={containerVariants}
-        className="container mx-auto px-6 relative z-10"
+        className="container mx-auto px-4 sm:px-6 relative z-10"
       >
-        {/* About Me Heading with underline animation */}
+        {/* Heading with modern underline */}
         <motion.div
           variants={itemVariants}
-          className="flex flex-col items-center mb-20"
+          className="flex flex-col items-center mb-16 sm:mb-24"
         >
-          <h2 className="text-5xl font-bold mb-3 tracking-wide">
-            <span className="text-white">ABOUT</span>
-            <span className="text-blue-400 ml-4">ME</span>
-          </h2>
-          <div className="relative">
-            <div className="h-1 w-24 bg-blue-500 rounded"></div>
+          <div className="relative mb-4">
+            <h2 className="text-4xl sm:text-5xl font-bold tracking-tight text-center">
+              <span className="text-white">ABOUT</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 ml-2">ME</span>
+            </h2>
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: "100%" }}
-              transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
-              className="h-1 w-full bg-blue-500 rounded absolute top-0 left-0 opacity-50"
+              animate={{ width: ["0%", "100%", "0%"] }}
+              transition={{ duration: 4, repeat: Infinity }}
+              className="h-px w-full bg-gradient-to-r from-transparent via-blue-500 to-transparent absolute -bottom-2 left-0"
             ></motion.div>
           </div>
+          <p className="text-blue-300/80 text-base sm:text-lg max-w-md sm:max-w-xl text-center mt-4">
+            Passionate developer with creative solutions for modern web & mobile expertise.
+          </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          {/* Personal Info Column */}
-          <motion.div variants={itemVariants} className="backdrop-blur-sm bg-black bg-opacity-30 p-8 rounded-xl border border-blue-900">
-            <h3 className="text-3xl font-bold mb-8 text-blue-400">PERSONAL INFORMATION:</h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8">
-              <div className="group">
-                <p className="text-lg text-gray-400 mb-1">First Name</p>
-                <p className="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">Kyle</p>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+          {/* Personal Info Column - 5 columns wide - REDESIGNED TO CODE STYLE */}
+          <motion.div variants={itemVariants} className="lg:col-span-5">
+            <div className="bg-[#0d1117] p-6 sm:p-8 rounded-2xl border border-[#30363d] shadow-xl relative overflow-hidden group transition-all duration-300 hover:shadow-blue-900/20 hover:border-blue-500/30">
+              {/* Code-style comment header */}
+              <div className="mb-4 text-[#8b949e] font-mono text-sm">
+                <span className="text-[#4d76cc]">// Profile Information</span>
               </div>
 
-              <div className="group">
-                <p className="text-lg text-gray-400 mb-1">Middle Name</p>
-                <p className="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">Sampiano</p>
+              {/* Code-style object declaration */}
+              <div className="font-mono text-sm">
+                <div className="mb-2">
+                  <span className="text-[#79c0ff]">const</span> <span className="text-[#7ee787]">Information</span> = {"{"}
+                </div>
+
+                {/* Properties - name, role */}
+                <div className="ml-4 mb-1">
+                  <span className="text-[#e6edf2]">name</span>: <span className="text-[#a5d6ff]">'Kyle Cervantes'</span>,
+                </div>
+                <div className="ml-4 mb-1">
+                  <span className="text-[#e6edf2]">role</span>: <span className="text-[#a5d6ff]">'Web & Mobile Developer'</span>,
+                </div>
+
+                {/* Tech stack as array */}
+                <div className="ml-4 mb-1">
+                  <span className="text-[#e6edf2]">stack</span>: [
+                  <span className="text-[#a5d6ff]">'Flutter'</span>, <span className="text-[#a5d6ff]">'React'</span>, <span className="text-[#a5d6ff]">'JavaScript'</span>],
+                </div>
+
+                {/* Expertise as array */}
+                <div className="ml-4 mb-1">
+                  <span className="text-[#e6edf2]">expertise</span>: [
+                </div>
+                <div className="ml-8 mb-1">
+                  <span className="text-[#a5d6ff]">'Web Development'</span>,
+                </div>
+                <div className="ml-8 mb-1">
+                  <span className="text-[#a5d6ff]">'Mobile Development'</span>,
+                </div>
+                <div className="ml-8 mb-1">
+                  <span className="text-[#a5d6ff]">'Frontend'</span>
+                </div>
+                <div className="ml-4 mb-1">
+                  ],
+                </div>
+
+                {/* Contact details */}
+                <div className="ml-4 mb-1">
+                  <span className="text-[#e6edf2]">age</span>: <span className="text-[#a5d6ff]">'21 Years'</span>,
+                </div>
+                <div className="ml-4 mb-1">
+                  <span className="text-[#e6edf2]">nationality</span>: <span className="text-[#a5d6ff]">'Filipino'</span>,
+                </div>
+                <div className="ml-4 mb-1">
+                  <span className="text-[#e6edf2]">languages</span>: [<span className="text-[#a5d6ff]">'Filipino'</span>, <span className="text-[#a5d6ff]">'English'</span>],
+                </div>
+                <div className="ml-4 mb-1">
+                  <span className="text-[#e6edf2]">address</span>: <span className="text-[#a5d6ff]">'Lianga Surigao Del Sur'</span>,
+                </div>
+                <div className="ml-4 mb-1">
+                  <span className="text-[#e6edf2]">phone</span>: <span className="text-[#a5d6ff]">'+63-969-209-1713'</span>,
+                </div>
+                <div className="ml-4 mb-1">
+                  <span className="text-[#e6edf2]">email</span>: <span className="text-[#a5d6ff]">'kylecervantes2003@gmail.com'</span>
+                </div>
+
+                {/* Close object */}
+                <div>
+                  {"};"}
+                </div>
               </div>
 
-              <div className="group">
-                <p className="text-lg text-gray-400 mb-1">Last Name</p>
-                <p className="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">Cervantes</p>
-              </div>
-
-              <div className="group">
-                <p className="text-lg text-gray-400 mb-1">Age</p>
-                <p className="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">21 Years</p>
-              </div>
-
-              <div className="group">
-                <p className="text-lg text-gray-400 mb-1">Nationality</p>
-                <p className="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">Filipino</p>
-              </div>
-
-              <div className="group">
-                <p className="text-lg text-gray-400 mb-1">Languages</p>
-                <p className="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">Filipino, English</p>
-              </div>
-
-              <div className="group">
-                <p className="text-lg text-gray-400 mb-1">Address</p>
-                <p className="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">Lianga Surigao Del Sur</p>
-              </div>
-
-              <div className="group">
-                <p className="text-lg text-gray-400 mb-1">Phone</p>
-                <p className="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">+63-969-209-1713</p>
-              </div>
-
-              <div className="group">
-                <p className="text-lg text-gray-400 mb-1">Freelance:</p>
-                <p className="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">Available</p>
-              </div>
-
-              <div className="group">
-                <p className="text-lg text-gray-400 mb-1">Email</p>
-                <p className="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">kylecervantes2003@gmail.com</p>
-              </div>
+              {/* Animated cursor */}
+              <div className="h-4 w-2 bg-blue-400/70 mt-2 animate-pulse"></div>
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="flex flex-col gap-6">
-            {/* Soft Skills Section with Circular Progress */}
+          {/* Right Column - 7 columns wide */}
+          <motion.div variants={itemVariants} className="lg:col-span-7 flex flex-col gap-8">
+            {/* Combined Soft Skills & Technical Expertise Box */}
             <motion.div
               variants={itemVariants}
-              className="backdrop-blur-sm bg-black bg-opacity-30 p-8 rounded-xl border border-blue-900 mb-6"
+              className="bg-white/5 p-6 sm:p-8 rounded-2xl border border-white/10 shadow-lg relative overflow-hidden"
             >
-              <h3 className="text-3xl font-bold mb-8 text-blue-400">SOFT SKILLS:</h3>
-              <div className="grid grid-cols-2 gap-6">
-                {softSkills.map((skill, index) => (
-                  <div key={index} className="flex flex-col items-center">
-                    <div className="relative h-32 w-32 mb-4">
-                      {/* Background circle */}
-                      <div className="absolute inset-0 rounded-full border-4 border-gray-700"></div>
+              {/* Soft Skills Section */}
+              <div className="mb-12">
+                <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">SOFT SKILLS</span>
+                  <span className="flex-grow border-t border-blue-500/20 ml-4"></span>
+                </h3>
 
-                      {/* Colored progress circle */}
-                      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100">
-                        <motion.circle
-                          cx="50"
-                          cy="50"
-                          r="48"
-                          fill="none"
-                          strokeWidth="4"
-                          stroke="url(#blueGradient)"
-                          strokeLinecap="round"
-                          strokeDasharray={`${skill.percentage * 3.01}, 1000`}
-                          transform="rotate(-90 50 50)"
-                          initial={{ strokeDasharray: "0, 1000" }}
-                          whileInView={{ strokeDasharray: `${skill.percentage * 3.01}, 1000` }}
-                          transition={{ duration: 1.5, delay: index * 0.2 }}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+                  {softSkills.map((skill, index) => (
+                    <div key={index} className="flex flex-col items-center">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20">
+                        <CircularProgressbar
+                          value={skill.percentage}
+                          text={`${skill.percentage}%`}
+                          styles={buildStyles({
+                            textColor: "#ffffff",
+                            pathColor: `url(#gradient-${index})`,
+                            trailColor: "#2d3748",
+                            textSize: "10px"
+                          })}
                         />
-                        <defs>
-                          <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#3B82F6" />
-                            <stop offset="100%" stopColor="#60A5FA" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-
-                      {/* Percentage display */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <motion.span
-                          initial={{ opacity: 0 }}
-                          whileInView={{ opacity: 1 }}
-                          transition={{ duration: 0.5, delay: index * 0.2 + 0.5 }}
-                          className="text-2xl font-bold text-blue-400"
-                        >
-                          {skill.percentage}%
-                        </motion.span>
+                        {/* Gradient for each skill */}
+                        <svg style={{ height: 0 }}>
+                          <defs>
+                            <linearGradient id={`gradient-${index}`} gradientTransform="rotate(90)">
+                              <stop offset="0%" stopColor={skill.color.split(" ")[0].split("-")[1]} />
+                              <stop offset="100%" stopColor={skill.color.split(" ")[1].split("-")[1]} />
+                            </linearGradient>
+                          </defs>
+                        </svg>
                       </div>
+                      <span className="mt-2 text-xs sm:text-sm font-medium text-white">{skill.name}</span>
                     </div>
-                    <p className="text-lg font-medium text-white text-center group-hover:text-blue-300 transition-colors">
-                      {skill.name}
-                    </p>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </motion.div>
 
-            {/* Stats Boxes */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Years Experience Box */}
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                className="relative border border-blue-900 p-8 rounded-xl bg-black bg-opacity-50 backdrop-blur-sm overflow-hidden group"
-              >
-                <div className="absolute -right-4 -top-4 w-24 h-24 bg-blue-500 rounded-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                <motion.h2
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="text-6xl font-bold text-blue-400"
-                >
-                  1<span className="text-4xl">+</span>
-                </motion.h2>
-                <div className="mt-4 flex items-center">
-                  <span className="w-10 h-0.5 bg-blue-500 mr-3"></span>
-                  <p className="uppercase font-medium text-gray-300">
-                    YEARS OF<br />EXPERIENCE
-                  </p>
+              {/* Technical Expertise Section */}
+              <div>
+                <h3 className="text-2xl font-bold mb-6 flex items-center">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">TECHNICAL EXPERTISE</span>
+                  <span className="flex-grow border-t border-blue-500/20 ml-4"></span>
+                </h3>
+
+                {/* Filter tabs */}
+                <div className="flex flex-wrap gap-3 mb-8">
+                  {techCategories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => setActiveCategory(category)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300
+                        ${activeCategory === category
+                          ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20"
+                          : "bg-white/10 text-gray-300 hover:bg-white/20"}`}
+                    >
+                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                    </button>
+                  ))}
                 </div>
-              </motion.div>
 
-              {/* Happy Customers Box */}
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                className="relative border border-blue-900 p-8 rounded-xl bg-black bg-opacity-50 backdrop-blur-sm overflow-hidden group"
-              >
-                <div className="absolute -right-4 -top-4 w-24 h-24 bg-indigo-600 rounded-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                <motion.h2
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 2, delay: 0.3, repeat: Infinity }}
-                  className="text-6xl font-bold text-blue-400"
+                <motion.div
+                  className="flex flex-wrap gap-3"
+                  initial="hidden"
+                  animate="visible"
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                      opacity: 1,
+                      transition: { staggerChildren: 0.05 }
+                    }
+                  }}
                 >
-                  4<span className="text-4xl">+</span>
-                </motion.h2>
-                <div className="mt-4 flex items-center">
-                  <span className="w-10 h-0.5 bg-blue-500 mr-3"></span>
-                  <p className="uppercase font-medium text-gray-300">
-                    SATISFIED<br />CUSTOMERS
-                  </p>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Certificates Box */}
-            <motion.div
-              whileHover={{ scale: 1.03, boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.1)" }}
-              className="relative border border-blue-900 p-8 rounded-xl bg-black bg-opacity-50 backdrop-blur-sm overflow-hidden group"
-            >
-              <div className="absolute -right-4 -top-4 w-32 h-32 bg-blue-800 rounded-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
-              <motion.h2
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 2, delay: 0.6, repeat: Infinity }}
-                className="text-6xl font-bold text-blue-400"
-              >
-                4<span className="text-4xl">+</span>
-              </motion.h2>
-              <div className="mt-4 flex items-center">
-                <span className="w-10 h-0.5 bg-blue-500 mr-3"></span>
-                <p className="uppercase font-medium text-gray-300">
-                  ACHIEVED<br />EXPERIENCE
-                </p>
+                  {filteredTech.map((tech, index) => (
+                    <motion.span
+                      key={index}
+                      variants={{
+                        hidden: { opacity: 0, scale: 0.8 },
+                        visible: { opacity: 1, scale: 1 }
+                      }}
+                      whileHover={{
+                        scale: 1.05,
+                        transition: { duration: 0.2 }
+                      }}
+                      className={`${tech.color} text-white font-medium px-4 py-2 rounded-lg text-sm flex items-center shadow-lg`}
+                    >
+                      {tech.name}
+                    </motion.span>
+                  ))}
+                </motion.div>
               </div>
             </motion.div>
           </motion.div>
         </div>
 
-        {/* Technical Expertise Section */}
+        {/* Stats Row moved to bottom - Modern approach */}
         <motion.div
           variants={itemVariants}
-          className="backdrop-blur-sm bg-black bg-opacity-30 p-8 rounded-xl border border-blue-900 mt-16"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8"
         >
-          <h3 className="text-3xl font-bold mb-8 text-blue-400">TECHNICAL EXPERTISE:</h3>
-          <div className="space-y-6">
-            {/* Frontend */}
-            <div>
-              <h4 className="text-lg font-medium mb-3 text-blue-300">Frontend Development</h4>
-              <div className="flex flex-wrap gap-2">
-                {techExpertise
-                  .filter(tech => tech.category === "frontend")
-                  .map((tech, index) => (
-                    <span
-                      key={index}
-                      className={`${tech.color} text-gray-900 font-medium px-3 py-1 rounded-full text-sm`}
-                    >
-                      {tech.name}
-                    </span>
-                  ))
-                }
-              </div>
-            </div>
+          {[
+            { number: "1+", label: "YEARS EXPERIENCE", color: "from-blue-500 to-blue-600" },
+            { number: "4+", label: "SATISFIED CLIENTS", color: "from-cyan-400 to-blue-500" },
+            { number: "4+", label: "ACHIEVEMENTS", color: "from-indigo-400 to-violet-500" }
+          ].map((stat, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="bg-white/5 p-4 sm:p-6 rounded-2xl border border-white/10 shadow-lg relative overflow-hidden"
+            >
+              {/* Background gradient */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-5`}></div>
 
-            {/* Backend */}
-            <div>
-              <h4 className="text-lg font-medium mb-3 text-green-300">Backend Development</h4>
-              <div className="flex flex-wrap gap-2">
-                {techExpertise
-                  .filter(tech => tech.category === "backend")
-                  .map((tech, index) => (
-                    <span
-                      key={index}
-                      className={`${tech.color} text-gray-900 font-medium px-3 py-1 rounded-full text-sm`}
-                    >
-                      {tech.name}
-                    </span>
-                  ))
-                }
+              <motion.h2
+                animate={{
+                  y: [0, -3, 0],
+                  x: [0, 1, 0]
+                }}
+                transition={{ duration: 3, delay: index * 0.5, repeat: Infinity }}
+                className={`text-3xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${stat.color}`}
+              >
+                {stat.number}
+              </motion.h2>
+              <div className="mt-3">
+                <div className="h-px w-12 bg-gradient-to-r from-blue-400 to-transparent mb-2"></div>
+                <p className="uppercase font-medium text-xs sm:text-sm tracking-wider text-gray-300">
+                  {stat.label}
+                </p>
               </div>
-            </div>
-
-            {/* Database */}
-            <div>
-              <h4 className="text-lg font-medium mb-3 text-yellow-300">Database & Cloud Services</h4>
-              <div className="flex flex-wrap gap-2">
-                {techExpertise
-                  .filter(tech => tech.category === "database")
-                  .map((tech, index) => (
-                    <span
-                      key={index}
-                      className={`${tech.color} text-gray-900 font-medium px-3 py-1 rounded-full text-sm`}
-                    >
-                      {tech.name}
-                    </span>
-                  ))
-                }
-              </div>
-            </div>
-          </div>
+            </motion.div>
+          ))}
         </motion.div>
+
       </motion.div>
     </section>
-  )
+  );
 }
