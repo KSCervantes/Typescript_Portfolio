@@ -8,7 +8,7 @@ export default function Schools() {
       id: 1,
       name: "North Eastern Mindanao State University",
       degree: "Bachelor of Science in Computer Science",
-      year: "2021 - 2025",
+      year: "2022 - 2025",
       location: "Lianga, Surigao del Sur, Philippines",
       description: "Specialized in web and mobile application development with focus on modern frameworks and programming languages.",
       achievements: ["None", "Ongoing"]
@@ -18,7 +18,7 @@ export default function Schools() {
       name: "Lianga National Comprehensive High School",
       degree: "Senior High School - HUMSS Track",
       year: "2019 - 2021",
-      location: "Manila, Philippines",
+      location: "Lianga,Surigao del Sur, Philippines",
       description: "Focused on studying societal issues and changes as well as human conditions.",
       achievements: ["Diploma", "Graduated with Honors"]
     }
