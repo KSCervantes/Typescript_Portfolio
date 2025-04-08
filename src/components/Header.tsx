@@ -52,11 +52,18 @@ export default function Header() {
   // Navigation items
   const navItems = ["About", "Projects", "Contact"];
 
-  // Close mobile menu when clicking outside
+  // Fixed: Modified click-outside handler to avoid menu button conflicts
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (mobileMenuOpen && !target.closest('nav') && !target.closest('button')) {
+      const target = event.target;
+      // Make sure we're not closing when clicking the menu button itself
+      const menuButton = document.querySelector('button[aria-label="Open menu"], button[aria-label="Close menu"]');
+      if (
+        mobileMenuOpen &&
+        !(target instanceof Element && target.closest('nav')) &&
+        target !== menuButton &&
+        !menuButton?.contains(target as Node)
+      ) {
         setMobileMenuOpen(false);
       }
     };
@@ -161,17 +168,21 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Enhanced mobile menu button with better animations */}
+        {/* Fixed: Mobile menu button with proper aria labels and event handling */}
         <motion.div
-          className="md:hidden"
+          className="md:hidden relative z-30"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
           <motion.button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => {
+              setMobileMenuOpen(!mobileMenuOpen);
+            }}
             className="p-2 rounded-full bg-blue-900/30 border border-blue-400/20 hover:bg-blue-800/40 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -184,15 +195,20 @@ export default function Header() {
         </motion.div>
       </div>
 
-      {/* Enhanced Mobile Navigation Menu with better animations and styling */}
+      {/* Fixed: Mobile Navigation Menu with simpler animation and ID attribute */}
       <motion.nav
-        initial={{ opacity: 0, height: 0 }}
+        id="mobile-menu"
+        initial={false}
         animate={{
           opacity: mobileMenuOpen ? 1 : 0,
           height: mobileMenuOpen ? "auto" : 0
         }}
+        style={{
+          display: mobileMenuOpen ? "block" : "none",
+          pointerEvents: mobileMenuOpen ? "auto" : "none"
+        }}
         transition={{ duration: 0.3 }}
-        className="md:hidden overflow-hidden mt-3"
+        className="md:hidden overflow-hidden mt-3 z-20 relative"
       >
         <motion.div
           className="flex flex-col items-center space-y-1 pb-2 rounded-lg bg-gradient-to-b from-blue-900/30 to-gray-900/30 backdrop-blur-md border border-blue-400/10"
