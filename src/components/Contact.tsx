@@ -1,8 +1,47 @@
-import { motion } from "framer-motion"
-import { useState } from "react"
+import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { Mail, Phone, MapPin, Github, Instagram, Facebook, Linkedin, ArrowRight, MessageCircle, Calendar, Clock } from "lucide-react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import emailjs from "emailjs-com";
 
 export default function Contact() {
   const [hoverLink, setHoverLink] = useState<number | null>(null);
+  const [messageCount, setMessageCount] = useState(0);
+  const [typingIndicator, setTypingIndicator] = useState(false);
+  const [currentTime, setCurrentTime] = useState("");
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isSending, setIsSending] = useState(false);
+
+  // New states for form inputs
+  const [messageInput, setMessageInput] = useState("");
+  const [senderEmail, setSenderEmail] = useState("");
+  const [senderName, setSenderName] = useState("");
+
+  // Update time
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      setCurrentTime(`${hours}:${minutes}`);
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Typing indicator animation
+  useEffect(() => {
+    if (typingIndicator) {
+      const timeout = setTimeout(() => {
+        setTypingIndicator(false);
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [typingIndicator]);
 
   // Animation variants
   const containerVariants = {
@@ -11,9 +50,9 @@ export default function Contact() {
       opacity: 1,
       transition: {
         staggerChildren: 0.2,
-        duration: 0.5
-      }
-    }
+        duration: 0.5,
+      },
+    },
   };
 
   const itemVariants = {
@@ -21,76 +60,166 @@ export default function Contact() {
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.5, ease: "easeOut" }
-    }
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
   };
 
-  // Social media links data
+  // Social media links data with enhanced info
   const socialLinks = [
     {
       name: "GitHub",
       url: "#",
-      icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
+      icon: <Github size={18} />,
+      color: "from-gray-600 to-gray-800",
+      description: "Check out my code repositories",
     },
     {
       name: "Instagram",
       url: "https://www.instagram.com/its_kylcrvnts/",
-      icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-            </svg>
+      icon: <Instagram size={18} />,
+      color: "from-pink-500 to-purple-700",
+      description: "View my creative snapshots",
     },
     {
       name: "Facebook",
       url: "https://web.facebook.com/profile.php?id=61565167920693",
-      icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M22.675 0h-21.35c-.733 0-1.325.592-1.325 1.325v21.351c0 .733.592 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.894-4.788 4.659-4.788 1.325 0 2.463.099 2.794.143v3.24h-1.918c-1.504 0-1.796.715-1.796 1.763v2.313h3.591l-.467 3.622h-3.124v9.294h6.127c.733 0 1.325-.591 1.325-1.324v-21.35c0-.733-.592-1.325-1.325-1.325z"/>
-            </svg>
+      icon: <Facebook size={18} />,
+      color: "from-blue-600 to-blue-800",
+      description: "Connect with me socially",
     },
     {
-    name: "LinkedIn",
-    url: "https://www.linkedin.com/in/kyle-cervantes/",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.027-3.063-1.867-3.063-1.868 0-2.155 1.46-2.155 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.841-1.563 3.038 0 3.6 2.001 3.6 4.604v5.592z" />
-      </svg>
-    ),
-  },
+      name: "LinkedIn",
+      url: "https://www.linkedin.com/in/kyle-cervantes/",
+      icon: <Linkedin size={18} />,
+      color: "from-blue-700 to-blue-900",
+      description: "See my professional profile",
+    },
   ];
 
-  // Contact info data
+  // Contact info data with availability status
   const contactInfo = [
     {
       title: "Email",
       value: "kylecervantes2003@gmail.com",
       link: "mailto:kylecervantes2003@gmail.com",
-      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
+      icon: <Mail size={20} className="text-white" />,
+      statusColor: "bg-green-500",
+      status: "Responds within 24 hours",
     },
     {
       title: "Phone",
       value: "+63-969-209-1713",
       link: "tel:+639692091713",
-      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
+      icon: <Phone size={20} className="text-white" />,
+      statusColor: "bg-yellow-500",
+      status: "Available weekdays 9AM - 5PM PHT",
     },
     {
       title: "Location",
-      value: "Lianga Surigao Del Sur",
+      value: "Lianga, Surigao Del Sur",
       link: null,
-      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-    }
+      icon: <MapPin size={20} className="text-white" />,
+      statusColor: "bg-blue-500",
+      status: "Philippines (GMT+8)",
+    },
   ];
 
+  // Send message function
+  const handleSendMessage = () => {
+    if (!messageInput.trim()) {
+      alert("Please enter a message.");
+      return;
+    }
+
+    setIsSending(true);
+    setTypingIndicator(true);
+
+    // Send email using EmailJS
+    emailjs
+      .send(
+        "service_8jv8mtr", // Your EmailJS service ID
+        "template_0d0c1hp", // Your EmailJS template ID
+        {
+          message: messageInput,
+          from_name: "Website Contact Form",
+          to_email: "kylecervantes2003@gmail.com", // Your email
+          subject: "New Message from Website",
+        },
+        "66khAmrY4EB00TYi_" // Your EmailJS user ID
+      )
+      .then(
+        () => {
+          setMessageCount((prev) => prev + 1);
+          setMessageInput("");
+          setIsSending(false);
+          alert("Message sent successfully!");
+        },
+        (error) => {
+          console.error("Failed to send message:", error);
+          alert("Failed to send message. Please try again.");
+          setIsSending(false);
+          setTypingIndicator(false);
+        }
+      );
+  };
+
+  const handleScheduleMeeting = () => {
+    setIsCalendarOpen(true);
+  };
+
+  const handleSendMeeting = () => {
+    if (!selectedDate) {
+      alert("Please select a date and time.");
+      return;
+    }
+
+    if (!senderEmail) {
+      alert("Please enter your email address.");
+      return;
+    }
+
+    setIsSending(true);
+
+    // Format the selected date
+    const formattedDate = selectedDate.toLocaleString();
+
+    // Send email using EmailJS
+    emailjs
+      .send(
+        "service_8jv8mtr", // Your EmailJS service ID
+        "template_0d0c1hp", // Your EmailJS template ID
+        {
+          message: `A meeting has been scheduled for: ${formattedDate}\nFrom: ${senderName || "Not provided"}\nEmail: ${senderEmail}`,
+          from_name: senderName || "Website Meeting Scheduler",
+          to_email: "kylecervantes2003@gmail.com", // Your email
+          subject: "Meeting Schedule Request",
+          reply_to: senderEmail, // Enable direct reply to the sender
+        },
+        "66khAmrY4EB00TYi_" // Your EmailJS user ID
+      )
+      .then(
+        () => {
+          alert("Meeting scheduled successfully!");
+          setIsCalendarOpen(false);
+          setSelectedDate(null);
+          setSenderEmail("");
+          setSenderName("");
+          setIsSending(false);
+        },
+        (error) => {
+          console.error("Failed to send email:", error);
+          alert("Failed to schedule the meeting. Please try again.");
+          setIsSending(false);
+        }
+      );
+  };
+
   return (
-    <section id="contact" className="py-16 md:py-32 bg-gradient-to-b from-gray-900 to-black text-white relative overflow-hidden">
-      {/* Enhanced background elements - matching About section */}
+    <section
+      id="contact"
+      className="py-16 sm:py-32 bg-gradient-to-b from-black to-gray-900 text-white relative overflow-hidden"
+    >
+      {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Gradient grid background */}
         <div className="absolute inset-0 bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] bg-[size:50px_50px] opacity-20"></div>
@@ -101,10 +230,10 @@ export default function Contact() {
             y: [0, -30, 0],
             x: [0, 20, 0],
             scale: [1, 1.1, 1],
-            opacity: [0.3, 0.5, 0.3]
+            opacity: [0.3, 0.5, 0.3],
           }}
           transition={{ duration: 15, repeat: Infinity, repeatType: "reverse" }}
-          className="absolute top-1/4 left-1/5 w-48 md:w-96 h-48 md:h-96 rounded-full bg-gradient-to-br from-blue-600/20 to-blue-400/10 blur-3xl"
+          className="absolute top-1/4 left-1/5 w-48 sm:w-64 md:w-96 h-48 sm:h-64 md:h-96 rounded-full bg-gradient-to-br from-blue-600/20 to-blue-400/10 blur-3xl"
         ></motion.div>
 
         <motion.div
@@ -112,10 +241,21 @@ export default function Contact() {
             y: [0, 40, 0],
             x: [0, -30, 0],
             scale: [1, 1.2, 1],
-            opacity: [0.2, 0.4, 0.2]
+            opacity: [0.2, 0.4, 0.2],
           }}
           transition={{ duration: 18, repeat: Infinity, repeatType: "reverse" }}
-          className="absolute bottom-1/3 right-1/4 w-64 md:w-[30rem] h-64 md:h-[30rem] rounded-full bg-gradient-to-tr from-indigo-700/20 to-violet-500/10 blur-3xl"
+          className="absolute bottom-1/3 right-1/4 w-64 sm:w-80 md:w-[30rem] h-64 sm:h-80 md:h-[30rem] rounded-full bg-gradient-to-tr from-indigo-700/20 to-violet-500/10 blur-3xl"
+        ></motion.div>
+
+        {/* Additional subtle glow elements */}
+        <motion.div
+          animate={{
+            y: [0, 20, 0],
+            scale: [1, 1.1, 1],
+            opacity: [0.1, 0.2, 0.1],
+          }}
+          transition={{ duration: 12, repeat: Infinity, repeatType: "mirror" }}
+          className="absolute top-1/2 left-3/4 w-32 md:w-64 h-32 md:h-64 rounded-full bg-gradient-to-r from-cyan-500/10 to-blue-300/5 blur-3xl"
         ></motion.div>
       </div>
 
@@ -124,55 +264,68 @@ export default function Contact() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={containerVariants}
-        className="container mx-auto px-4 sm:px-6 relative z-10"
+        className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10"
       >
-        {/* Contact Heading with modern underline */}
+        {/* Enhanced Heading with Animated Underline */}
         <motion.div
           variants={itemVariants}
-          className="flex flex-col items-center mb-12 md:mb-20"
+          className="flex flex-col items-center mb-16"
         >
           <div className="relative mb-4">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-center">
+            <h2 className="text-4xl sm:text-5xl font-bold tracking-tight text-center">
               <span className="text-white">CONTACT</span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 ml-2 md:ml-4">ME</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 ml-2">
+                ME
+              </span>
             </h2>
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: ["0%", "100%", "0%"] }}
               transition={{ duration: 4, repeat: Infinity }}
-              className="h-px w-full bg-gradient-to-r from-transparent via-blue-500 to-transparent absolute -bottom-2 left-0"
+              className="h-0.5 w-full bg-gradient-to-r from-transparent via-blue-500 to-transparent absolute -bottom-2 left-0"
             ></motion.div>
           </div>
-          <p className="text-blue-300/80 text-base md:text-lg max-w-xl text-center px-4">
-            Let's connect and discuss how we can work together on your next project
+          <p className="text-blue-300/80 text-base sm:text-lg max-w-md sm:max-w-xl text-center mt-4">
+            Let's connect and create something amazing together
           </p>
         </motion.div>
 
+        {/* Contact Container */}
         <motion.div
           variants={itemVariants}
-          className="max-w-4xl mx-auto"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8"
         >
-          <div className="backdrop-filter backdrop-blur-xl bg-white/5 p-5 sm:p-8 md:p-10 rounded-2xl border border-white/10 shadow-xl relative overflow-hidden group transition-all duration-300 hover:shadow-blue-900/20 hover:border-blue-500/30">
-            {/* Decorative corner elements */}
-            <div className="absolute w-12 h-12 md:w-16 md:h-16 -top-6 md:-top-8 -left-6 md:-left-8 border-b border-r border-blue-500/30 rounded-br-3xl"></div>
-            <div className="absolute w-12 h-12 md:w-16 md:h-16 -bottom-6 md:-bottom-8 -right-6 md:-right-8 border-t border-l border-blue-500/30 rounded-tl-3xl"></div>
+          {/* Enhanced Contact Info Column */}
+          <div className="lg:col-span-7">
+            <motion.div
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="relative group h-full"
+            >
+              {/* Enhanced glow effect on hover */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-xl opacity-0 group-hover:opacity-40 blur transition duration-300"></div>
 
-            {/* Main content */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10">
-              {/* Contact Info Column */}
-              <div className="lg:col-span-7 space-y-6 md:space-y-8">
-                <div>
-                  <h3 className="text-xl md:text-2xl font-bold flex items-center mb-4 md:mb-6">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">GET IN TOUCH</span>
-                    <span className="flex-grow border-t border-blue-500/20 ml-4"></span>
-                  </h3>
-                  <p className="text-gray-300 text-sm md:text-base mb-6 md:mb-8">
-                    Feel free to reach out if you have any questions or would like to collaborate on a project. I'm always open to new opportunities and challenges.
-                  </p>
+              {/* Enhanced Card with Chat-like Interface */}
+              <div className="relative bg-gray-800/70 backdrop-blur-sm rounded-xl overflow-hidden border border-gray-700 group-hover:border-blue-500/50 transition-all duration-300 h-full">
+                {/* Top section with enhanced heading */}
+                <div className="bg-gray-900/80 p-6 border-b border-gray-700 flex justify-between items-center">
+                  <div>
+                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                      <MessageCircle size={18} className="text-blue-400" />
+                      Get In Touch
+                    </h3>
+                    <p className="text-blue-300 mt-2">
+                      Feel free to reach out for collaborations or just a
+                      friendly chat
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 bg-gray-800/60 p-2 rounded-lg">
+                    <Clock size={14} className="text-blue-400" />
+                    <span className="text-sm text-blue-300">{currentTime}</span>
+                  </div>
                 </div>
 
-                {/* Contact Info Items - Mobile optimized */}
-                <div className="space-y-4 md:space-y-6">
+                {/* Enhanced Contact Info Items */}
+                <div className="p-6 space-y-6">
                   {contactInfo.map((item, index) => (
                     <motion.div
                       key={index}
@@ -182,36 +335,77 @@ export default function Contact() {
                       {item.link ? (
                         <a
                           href={item.link}
-                          className="flex items-start p-3 md:p-4 rounded-xl transition-all duration-300 hover:bg-white/5"
+                          className="flex items-start rounded-xl transition-all duration-300 hover:bg-white/5 p-3 relative overflow-hidden"
                           onMouseEnter={() => setHoverLink(index)}
                           onMouseLeave={() => setHoverLink(null)}
                         >
-                          <div className="mr-3 md:mr-4 p-2 md:p-3 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg shadow-lg shadow-blue-500/20">
+                          {/* Subtle hover effect */}
+                          <div
+                            className={`absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-300`}
+                          ></div>
+
+                          <div className="mr-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg shadow-lg shadow-blue-500/20 z-10">
                             {item.icon}
                           </div>
-                          <div className="overflow-hidden">
-                            <h4 className="text-xs md:text-sm font-medium text-blue-300/90 mb-1">{item.title}</h4>
-                            <p className="text-base md:text-lg font-medium text-white relative overflow-hidden break-all md:break-normal">
+                          <div className="z-10 flex-grow">
+                            <h4 className="text-sm font-medium text-blue-300/90 mb-1">
+                              {item.title}
+                            </h4>
+                            <p className="text-lg font-medium text-white relative overflow-hidden">
                               {item.value}
-                              <span className={`absolute bottom-0 left-0 h-px bg-gradient-to-r from-blue-400 to-cyan-300 transition-all duration-300 ${hoverLink === index ? 'w-full' : 'w-0'}`}></span>
+                              <span
+                                className={`absolute bottom-0 left-0 h-px bg-gradient-to-r from-blue-400 to-cyan-300 transition-all duration-300 ${
+                                  hoverLink === index ? "w-full" : "w-0"
+                                }`}
+                              ></span>
                             </p>
+                            <div className="flex items-center mt-2 gap-2">
+                              <span
+                                className={`h-2 w-2 rounded-full ${item.statusColor}`}
+                              ></span>
+                              <span className="text-xs text-blue-200">
+                                {item.status}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="z-10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
+                            <ArrowRight size={16} className="text-blue-400" />
                           </div>
                         </a>
                       ) : (
                         <div
-                          className="flex items-start p-3 md:p-4 rounded-xl transition-all duration-300 hover:bg-white/5"
+                          className="flex items-start rounded-xl transition-all duration-300 hover:bg-white/5 p-3 relative overflow-hidden"
                           onMouseEnter={() => setHoverLink(index)}
                           onMouseLeave={() => setHoverLink(null)}
                         >
-                          <div className="mr-3 md:mr-4 p-2 md:p-3 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg shadow-lg shadow-blue-500/20">
+                          {/* Subtle hover effect */}
+                          <div
+                            className={`absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-300`}
+                          ></div>
+
+                          <div className="mr-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg shadow-lg shadow-blue-500/20 z-10">
                             {item.icon}
                           </div>
-                          <div>
-                            <h4 className="text-xs md:text-sm font-medium text-blue-300/90 mb-1">{item.title}</h4>
-                            <p className="text-base md:text-lg font-medium text-white relative overflow-hidden">
+                          <div className="z-10 flex-grow">
+                            <h4 className="text-sm font-medium text-blue-300/90 mb-1">
+                              {item.title}
+                            </h4>
+                            <p className="text-lg font-medium text-white relative overflow-hidden">
                               {item.value}
-                              <span className={`absolute bottom-0 left-0 h-px bg-gradient-to-r from-blue-400 to-cyan-300 transition-all duration-300 ${hoverLink === index ? 'w-full' : 'w-0'}`}></span>
+                              <span
+                                className={`absolute bottom-0 left-0 h-px bg-gradient-to-r from-blue-400 to-cyan-300 transition-all duration-300 ${
+                                  hoverLink === index ? "w-full" : "w-0"
+                                }`}
+                              ></span>
                             </p>
+                            <div className="flex items-center mt-2 gap-2">
+                              <span
+                                className={`h-2 w-2 rounded-full ${item.statusColor}`}
+                              ></span>
+                              <span className="text-xs text-blue-200">
+                                {item.status}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -219,57 +413,339 @@ export default function Contact() {
                   ))}
                 </div>
 
-                {/* Social Media Links - Mobile optimized */}
-                <div className="pt-4 md:pt-6">
-                  <h4 className="text-base md:text-lg font-medium text-blue-300/90 mb-4 md:mb-6">
+                {/* Enhanced Social Media Links with Hover Effects */}
+                <div className="p-6 border-t border-gray-700">
+                  <h4 className="text-lg font-medium text-blue-300/90 mb-4">
                     Connect With Me
-                    <div className="h-px w-20 bg-gradient-to-r from-blue-400 to-transparent mt-2"></div>
                   </h4>
-                  <div className="flex flex-wrap gap-3 md:gap-4">
+                  <div className="flex flex-wrap gap-4">
                     {socialLinks.map((social, index) => (
                       <motion.a
                         key={index}
                         href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         aria-label={social.name}
                         whileHover={{
                           y: -5,
-                          boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.5)"
+                          boxShadow:
+                            "0 10px 25px -5px rgba(59, 130, 246, 0.5)",
                         }}
-                        className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center rounded-lg text-white shadow-lg transition-all duration-300 hover:text-white"
+                        whileTap={{ scale: 0.95 }}
+                        className={`w-12 h-12 bg-gradient-to-br ${social.color} flex items-center justify-center rounded-lg text-white shadow-lg transition-all duration-300 hover:text-white relative group/social`}
                       >
                         {social.icon}
-                        <span className="absolute mt-16 opacity-0 group-hover:opacity-100 text-xs font-medium transition-opacity duration-300">{social.name}</span>
+                        <div className="absolute -bottom-10 opacity-0 group-hover/social:opacity-100 group-hover/social:translate-y-0 translate-y-2 text-xs font-medium transition-all duration-300 text-center w-24 bg-gray-800 p-1 rounded shadow-lg pointer-events-none">
+                          <div className="font-bold">{social.name}</div>
+                          <div className="text-blue-300 text-xs leading-tight">
+                            {social.description}
+                          </div>
+                        </div>
                       </motion.a>
                     ))}
                   </div>
                 </div>
-              </div>
 
-              {/* Map/Visual Column - Mobile optimized */}
-              <div className="lg:col-span-5">
-                <div className="h-56 sm:h-64 md:h-full min-h-64 rounded-xl overflow-hidden relative group">
-                  {/* Placeholder map/location visual - Replace with actual map component if available */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 to-black/50 z-10 group-hover:opacity-60 transition-opacity duration-300"></div>
-                  <div className="absolute inset-0 flex items-center justify-center z-20">
-                    <div className="text-center px-4 md:px-6">
-                      <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 rounded-full bg-blue-500 flex items-center justify-center animate-pulse">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                      </div>
-                      <h3 className="text-lg md:text-xl font-bold text-white mb-1 md:mb-2">Lianga, Surigao Del Sur</h3>
-                      <p className="text-blue-200 text-xs md:text-sm">Philippines</p>
-                    </div>
+                {/* Interactive Message Box */}
+                <div className="p-6 border-t border-gray-700 relative">
+                  <div className="flex">
+                    <input
+                      type="text"
+                      placeholder="Write a message..."
+                      className="flex-grow bg-gray-900/60 text-white border border-gray-700 rounded-l-lg p-2 px-4 outline-none focus:border-blue-500 transition-colors duration-300"
+                      value={messageInput}
+                      onChange={(e) => setMessageInput(e.target.value)}
+                      disabled={isSending}
+                    />
+                    <button
+                      onClick={handleSendMessage}
+                      disabled={isSending}
+                      className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 px-4 rounded-r-lg hover:from-blue-700 hover:to-blue-900 transition-all duration-300 flex items-center gap-2 disabled:opacity-50"
+                    >
+                      <span>{isSending ? "Sending..." : "Send"}</span>
+                      <ArrowRight size={16} />
+                    </button>
                   </div>
+
+                  {/* Message Counter */}
+                  <div className="absolute top-0 right-0 -translate-y-full">
+                    {messageCount > 0 && (
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-4 min-h-4"
+                      >
+                        {messageCount}
+                      </motion.div>
+                    )}
+                  </div>
+
+                  {/* Typing Indicator Animation */}
+                  {typingIndicator && (
+                    <div className="mt-2 text-xs text-blue-300 flex items-center gap-2">
+                      <div className="flex space-x-1">
+                        <motion.div
+                          animate={{ y: [0, -5, 0] }}
+                          transition={{
+                            duration: 0.6,
+                            repeat: Infinity,
+                            repeatType: "loop",
+                            delay: 0,
+                          }}
+                          className="h-1.5 w-1.5 rounded-full bg-blue-400"
+                        ></motion.div>
+                        <motion.div
+                          animate={{ y: [0, -5, 0] }}
+                          transition={{
+                            duration: 0.6,
+                            repeat: Infinity,
+                            repeatType: "loop",
+                            delay: 0.2,
+                          }}
+                          className="h-1.5 w-1.5 rounded-full bg-blue-400"
+                        ></motion.div>
+                        <motion.div
+                          animate={{ y: [0, -5, 0] }}
+                          transition={{
+                            duration: 0.6,
+                            repeat: Infinity,
+                            repeatType: "loop",
+                            delay: 0.4,
+                          }}
+                          className="h-1.5 w-1.5 rounded-full bg-blue-400"
+                        ></motion.div>
+                      </div>
+                      <span>Kyle is typing...</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Enhanced corner decoration */}
+                <div className="absolute top-0 right-0 border-t-[40px] border-r-[40px] border-t-transparent border-r-blue-500/30"></div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Enhanced Map/Location Column */}
+          <div className="lg:col-span-5">
+            <motion.div
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="relative group h-full"
+            >
+              {/* Enhanced glow effect on hover */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-xl opacity-0 group-hover:opacity-40 blur transition duration-300"></div>
+
+              {/* Enhanced Card */}
+              <div className="relative h-full bg-gray-800/70 backdrop-blur-sm rounded-xl overflow-hidden border border-gray-700 group-hover:border-blue-500/50 transition-all duration-300 flex flex-col">
+                {/* Enhanced Map visualization */}
+                <div className="flex-grow min-h-64 relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-indigo-900 opacity-60"></div>
                   <div className="absolute inset-0 bg-[url('/api/placeholder/800/600')] bg-cover bg-center opacity-30 mix-blend-overlay"></div>
+
+                  {/* Enhanced Map Grid */}
+                  <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(59,130,246,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.1)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+
+                  {/* Animated Radar Pulse */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <div className="relative">
+                      <motion.div
+                        animate={{
+                          scale: [0, 1.5],
+                          opacity: [0.8, 0],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeOut",
+                        }}
+                        className="absolute inset-0 rounded-full border border-blue-400"
+                      ></motion.div>
+                      <motion.div
+                        animate={{
+                          scale: [0, 1.5],
+                          opacity: [0.8, 0],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeOut",
+                          delay: 0.5,
+                        }}
+                        className="absolute inset-0 rounded-full border border-blue-400"
+                      ></motion.div>
+                    </div>
+                  </div>
+
+                  {/* Enhanced Location marker */}
+                  <div className="absolute inset-0 flex items-center justify-center z-20">
+                    <div className="text-center">
+                      <motion.div
+                        whileHover={{
+                          y: -5,
+                          boxShadow:
+                            "0 10px 25px -5px rgba(59, 130, 246, 0.5)",
+                        }}
+                        className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/30 cursor-pointer group"
+                      >
+                        <MapPin
+                          size={28}
+                          className="text-white group-hover:scale-110 transition-all duration-300"
+                        />
+                      </motion.div>
+                      <h3 className="text-xl font-bold text-white mb-2">
+                        Lianga, Surigao Del Sur
+                      </h3>
+                      <div className="text-blue-200 text-sm flex items-center justify-center gap-1">
+                        <motion.span
+                          animate={{ y: [0, -3, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        >
+                          🇵🇭
+                        </motion.span>
+                        <span>Philippines (GMT+8)</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Enhanced availability calendar section */}
+                <div className="p-6 bg-gray-800/80 border-t border-gray-700">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Calendar size={16} className="text-blue-400" />
+                    <h4 className="text-base font-medium text-blue-300">
+                      Availability
+                    </h4>
+                  </div>
+
+                  <div className="grid grid-cols-7 gap-1 mb-4">
+                    {["M", "T", "W", "T", "F", "S", "S"].map((day, i) => (
+                      <div
+                        key={i}
+                        className={`text-center text-xs font-medium p-1 rounded-md ${
+                          i < 5 ? "text-blue-300" : "text-gray-500"
+                        }`}
+                      >
+                        {day}
+                      </div>
+                    ))}
+                    {["M", "T", "W", "T", "F"].map((_, i) => (
+                      <div
+                        key={i}
+                        className="h-2 bg-gradient-to-r from-green-500 to-green-400 rounded-md"
+                      />
+                    ))}
+                    {["S", "S"].map((_, i) => (
+                      <div
+                        key={i}
+                        className="h-2 bg-gradient-to-r from-gray-700 to-gray-600 rounded-md"
+                      />
+                    ))}
+                  </div>
+
+                  <p className="text-blue-300 text-sm">
+                    I'm open to remote work opportunities and collaborations
+                    from anywhere in the world.
+                  </p>
+                </div>
+
+                {/* Enhanced corner decoration */}
+                <div className="absolute top-0 right-0 border-t-[40px] border-r-[40px] border-t-transparent border-r-blue-500/30"></div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Schedule Meeting Button */}
+        <motion.div variants={itemVariants} className="mt-8 text-center">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleScheduleMeeting}
+            className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white px-6 py-3 rounded-lg shadow-lg shadow-blue-500/20 flex items-center gap-2 mx-auto transition-all duration-300"
+          >
+            <Calendar size={18} />
+            <span>Schedule a Meeting</span>
+          </motion.button>
+        </motion.div>
+
+        {/* Calendar Popup with Email Field */}
+        {isCalendarOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-white max-w-md w-full">
+              <h3 className="text-xl font-bold mb-4 text-blue-300">Schedule a Meeting</h3>
+
+              <div className="space-y-4">
+                {/* Name field */}
+                <div>
+                  <label className="block text-blue-300 text-sm font-medium mb-1">Your Name</label>
+                  <input
+                    type="text"
+                    placeholder="John Doe"
+                    value={senderName}
+                    onChange={(e) => setSenderName(e.target.value)}
+                    className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-blue-500 outline-none"
+                  />
+                </div>
+
+                {/* Email field */}
+                <div>
+                  <label className="block text-blue-300 text-sm font-medium mb-1">Your Email <span className="text-red-400">*</span></label>
+                  <input
+                    type="email"
+                    placeholder="your@email.com"
+                    value={senderEmail}
+                    onChange={(e) => setSenderEmail(e.target.value)}
+                    required
+                    className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-blue-500 outline-none"
+                  />
+                </div>
+
+                {/* Date picker */}
+                <div>
+                  <label className="block text-blue-300 text-sm font-medium mb-1">
+                    Preferred Date & Time <span className="text-red-400">*</span>
+                  </label>
+                  <DatePicker
+                    selected={selectedDate}
+                    onChange={(date) => setSelectedDate(date)}
+                    showTimeSelect
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-blue-500 outline-none"
+                    placeholderText="Select date and time"
+                    minDate={new Date()}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setIsCalendarOpen(false)}
+                  className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600 transition-colors duration-300 text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSendMeeting}
+                  disabled={isSending || !selectedDate || !senderEmail}
+                  className="px-6 py-2 rounded bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white flex items-center gap-2 disabled:opacity-50 transition-all duration-300"
+                >
+                  {isSending ? (
+                    <>
+                      <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Calendar size={16} />
+                      <span>Schedule</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </div>
-        </motion.div>
+        )}
       </motion.div>
     </section>
-  )
+  );
 }
