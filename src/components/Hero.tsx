@@ -183,8 +183,8 @@ export default function Hero() {
               className="relative group"
             >
               <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-lg opacity-0 group-hover:opacity-40 blur transition duration-300"></div>
-              <div className="relative bg-gray-800/70 backdrop-blur-sm px-4 py-2.5 sm:px-5 sm:py-3 rounded-lg transition-all duration-300 text-white flex items-center justify-center gap-2 text-sm border border-gray-700 group-hover:border-blue-500/50 shadow-lg">
-                <Mail size={16} className="text-blue-400" />
+              <div className="relative bg-gray-800/70 backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg transition-all duration-300 text-white flex items-center justify-center gap-2 text-xs sm:text-sm border border-gray-700 group-hover:border-blue-500/50 shadow-lg">
+                <Mail size={14} className="text-blue-400" />
                 <span className="text-blue-200">Get in Touch</span>
               </div>
             </motion.a>
@@ -197,8 +197,8 @@ export default function Hero() {
               className="relative group"
             >
               <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-lg opacity-0 group-hover:opacity-40 blur transition duration-300"></div>
-              <div className="relative bg-gray-800/70 backdrop-blur-sm px-4 py-2.5 sm:px-5 sm:py-3 rounded-lg transition-all duration-300 text-white flex items-center justify-center gap-2 text-sm border border-gray-700 group-hover:border-blue-500/50 shadow-lg">
-                <FileText size={16} className="text-blue-400" />
+              <div className="relative bg-gray-800/70 backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg transition-all duration-300 text-white flex items-center justify-center gap-2 text-xs sm:text-sm border border-gray-700 group-hover:border-blue-500/50 shadow-lg">
+                <FileText size={14} className="text-blue-400" />
                 <span className="text-blue-200">CV/Resume</span>
               </div>
             </motion.button>
