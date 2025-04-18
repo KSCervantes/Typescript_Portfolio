@@ -1,6 +1,6 @@
 import { projects } from "../data/projects"
 import { motion } from "framer-motion"
-import { ExternalLink, Github } from "lucide-react"
+import { ExternalLink, Github, Star } from "lucide-react"
 
 // Define the project type to match the properties you use
 interface Project {
@@ -10,6 +10,7 @@ interface Project {
   image?: string;
   technologies?: string[];
   demo?: string;
+  status?: string;
 }
 
 export default function Projects() {
@@ -37,7 +38,7 @@ export default function Projects() {
 
   return (
     <section id="projects" className="py-32 bg-gradient-to-b from-gray-900 to-black text-white relative overflow-hidden">
-      {/* Background elements matching Hero and About sections */}
+      {/* Background elements matching Experience section */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Gradient grid background */}
         <div className="absolute inset-0 bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] bg-[size:50px_50px] opacity-20"></div>
@@ -67,7 +68,7 @@ export default function Projects() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Enhanced Section Header */}
+        {/* Section Header matching Experience section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -76,9 +77,9 @@ export default function Projects() {
           className="flex flex-col items-center mb-16 md:mb-24"
         >
           <div className="relative mb-4">
-            <h2 className="text-5xl sm:text-6xl font-bold tracking-tight">
+            <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
               <span className="text-white">MY</span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 ml-4">PROJECTS</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 ml-2">PROJECTS</span>
             </h2>
             <motion.div
               initial={{ width: 0 }}
@@ -87,8 +88,8 @@ export default function Projects() {
               className="h-px w-full bg-gradient-to-r from-transparent via-blue-500 to-transparent absolute -bottom-2 left-0"
             ></motion.div>
           </div>
-          <p className="text-blue-300/80 text-lg max-w-xl text-center">
-            Showcasing my creative work and development skills
+          <p className="text-blue-300/80 text-base sm:text-lg max-w-xl text-center mt-4">
+            Showcasing my creative work and technical expertise in action
           </p>
         </motion.div>
 
@@ -104,96 +105,99 @@ export default function Projects() {
             <motion.div
               key={index}
               variants={itemVariants}
-              whileHover={{ y: -8, transition: { duration: 0.3 } }}
-              className="group relative backdrop-blur-sm bg-white/5 rounded-2xl overflow-hidden shadow-lg border border-white/10 hover:border-blue-500/50 transition-all duration-300 flex flex-col h-full"
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="relative group"
             >
-              {/* Enhanced lighting effects */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="absolute -inset-px bg-gradient-to-br from-blue-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+              {/* Glow effect on hover - matching Experience cards */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-xl opacity-0 group-hover:opacity-30 blur transition duration-300"></div>
 
-              {/* Project Image with enhanced styling */}
-              <div className="h-48 sm:h-56 md:h-64 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50 z-10"></div>
-                {project.image ? (
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full bg-gradient-to-br from-gray-800 to-gray-900">
-                    <span className="text-gray-400">No image available</span>
-                  </div>
-                )}
-
-                {/* Project title overlay on image */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 z-20">
-                  <h4 className="text-xl sm:text-2xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors duration-300">
-                    {project.title}
-                  </h4>
-                </div>
-              </div>
-
-              {/* Project Content with improved spacing */}
-              <div className="p-5 sm:p-6 flex-grow">
-                <p className="text-gray-300 mb-6">{project.description}</p>
-
-                {/* Tech Stack with improved styling */}
-                {project.technologies && (
-                  <div className="mb-6">
-                    <p className="text-sm text-blue-400 mb-3 font-medium">Technologies:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {project.technologies.map((tech: string, i: number) => (
-                        <span
-                          key={i}
-                          className="text-xs px-3 py-1.5 rounded-full bg-white/10 text-blue-300 border border-blue-500/20 backdrop-blur-sm"
-                        >
-                          {tech}
-                        </span>
-                      ))}
+              {/* Card */}
+              <div className="relative bg-gray-800/70 backdrop-blur-sm rounded-xl overflow-hidden border border-gray-700 group-hover:border-blue-500/50 transition-all duration-300 h-full flex flex-col">
+                {/* Image Section */}
+                <div className="h-48 sm:h-56 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50 z-10"></div>
+                  {project.image ? (
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full bg-gradient-to-br from-gray-800 to-gray-900">
+                      <span className="text-gray-400">No image available</span>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
 
-              {/* Enhanced Project Links - Fixed for better clickability */}
-              <div className="p-5 sm:p-6 border-t border-white/10 flex justify-between items-center relative z-20">
-                {project.link && (
-                  <motion.a
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-blue-400 px-4 py-2 rounded-lg transition-all duration-300 cursor-pointer"
-                    style={{ pointerEvents: 'auto' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(project.link, '_blank');
-                    }}
-                  >
-                    <Github size={16} />
-                    <span className="font-medium">GitHub</span>
-                  </motion.a>
-                )}
-                {project.demo && (
-                  <motion.a
-                    href={project.demo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-300 shadow-lg shadow-blue-600/20 cursor-pointer"
-                    style={{ pointerEvents: 'auto' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(project.demo, '_blank');
-                    }}
-                  >
-                    <ExternalLink size={16} />
-                    <span className="font-medium">Live Demo</span>
-                  </motion.a>
-                )}
+                  {/* Project title overlay on image */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
+                    <h3 className="text-lg font-bold text-white">{project.title}</h3>
+                  </div>
+
+                  {/* Corner decoration - matching Experience cards */}
+                  <div className="absolute top-0 right-0 border-t-[40px] border-r-[40px] border-t-transparent border-r-blue-500/20"></div>
+                </div>
+
+                {/* Content Section */}
+                <div className="p-5 flex-grow">
+                  <p className="text-gray-300 mb-5 text-sm border-l-2 border-blue-500/30 pl-4">
+                    {project.description}
+                  </p>
+
+                  {/* Status */}
+                  {project.status && (
+                    <p className="text-md text-yellow-400 font-semibold mb-4">
+                      {project.status}
+                    </p>
+                  )}
+
+                  {/* Technologies */}
+                  {project.technologies && (
+                    <div>
+                      <h4 className="text-xs uppercase tracking-wider text-blue-400 mb-3 font-semibold flex items-center">
+                        <Star size={14} className="mr-1" />
+                        Technologies Used
+                      </h4>
+                      <div className="space-y-2">
+                        {project.technologies.map((tech, i) => (
+                          <div key={i} className="flex items-center bg-gray-900/50 rounded-lg p-2 text-sm">
+                            <div className="h-2 w-2 rounded-full bg-blue-500 mr-2"></div>
+                            <p className="text-gray-200">{tech}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Project Links */}
+                <div className="p-5 border-t border-white/10 flex justify-between items-center">
+                  {project.link && (
+                    <motion.a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-blue-400 px-4 py-2 rounded-lg transition-all duration-300"
+                    >
+                      <Github size={16} />
+                      <span className="font-medium">GitHub</span>
+                    </motion.a>
+                  )}
+                  {project.demo && (
+                    <motion.a
+                      href={project.demo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-300 shadow-lg shadow-blue-600/20"
+                    >
+                      <ExternalLink size={16} />
+                      <span className="font-medium">Live Demo</span>
+                    </motion.a>
+                  )}
+                </div>
               </div>
             </motion.div>
           ))}
