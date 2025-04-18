@@ -12,19 +12,20 @@ export default function Hero() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
-        duration: 0.7
-      }
-    }
+        staggerChildren: 0.2, // Smooth cascading effect
+        duration: 0.8,
+        ease: "easeInOut",
+      },
+    },
   };
 
   const itemVariants = {
-    hidden: { y: 25, opacity: 0 },
+    hidden: { y: 30, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.5, ease: "easeOut" }
-    }
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
   };
 
   // Programming languages animation
@@ -98,7 +99,7 @@ export default function Hero() {
         {/* Enhanced Profile Picture */}
         <motion.div
           variants={itemVariants}
-          whileHover={{ scale: 1.03, y: -5, transition: { duration: 0.2 } }}
+          whileHover={{ scale: 1.05, y: -5, transition: { duration: 0.3 } }}
           className="relative mb-6 md:mb-0 group"
         >
           <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-xl opacity-0 group-hover:opacity-40 blur transition duration-300"></div>
@@ -136,7 +137,7 @@ export default function Hero() {
           variants={itemVariants}
           className="flex flex-col items-center md:items-start text-center md:text-left max-w-lg"
         >
-          <div className="relative mb-4">
+          <div className="relative mb-4 flex flex-col items-center justify-center sm:items-start sm:justify-start">
             <div className="flex items-center space-x-2 mb-2">
               <span className="text-lg sm:text-xl font-medium text-white/90">Hello</span>
               <motion.span
