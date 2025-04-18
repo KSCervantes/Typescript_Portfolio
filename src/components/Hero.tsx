@@ -53,13 +53,8 @@ const LanguageIcons = {
 // Memoize LanguageIcon component for better performance
 const LanguageIcon = memo(({ language }: { language: keyof typeof LanguageIcons }) => {
   return (
-    <div className="flex items-center gap-1.5 text-sm font-mono">
-      <span className="text-blue-400">&lt;</span>
-      <div className="flex items-center gap-1">
-        {LanguageIcons[language] || null}
-        <span className="text-blue-300">{language}</span>
-      </div>
-      <span className="text-blue-400">/&gt;</span>
+    <div className="flex items-center">
+      {LanguageIcons[language] || null}
     </div>
   );
 });
@@ -251,21 +246,22 @@ export default function Hero() {
             className="mt-8 relative w-full overflow-hidden h-10"
           >
             {/* Mobile-optimized tech stack with horizontal scrolling */}
-            <div className="flex gap-4 w-full overflow-x-auto md:hidden scrollbar-hide">
-              {programmingLanguages.map((lang, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: index * 0.1, duration: 0.3 }}
-                  className="flex flex-col items-center gap-1 flex-shrink-0"
-                >
-                  <div className="bg-gray-800 p-1.5 rounded-md border border-gray-700">
-                    {LanguageIcons[lang as keyof typeof LanguageIcons]}
-                  </div>
-                  <span className="text-xs text-gray-400">{lang}</span>
-                </motion.div>
-              ))}
+            <div className="flex gap-4 w-full overflow-x-auto md:hidden scrollbar-hide relative">
+              <motion.div
+                animate={{
+                  x: [0, -1000], // Adjust the distance based on the total width of the icons
+                }}
+                transition={{
+                  duration: 25, // Adjust the duration for smooth scrolling
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+                className="flex gap-8"
+              >
+                {[...programmingLanguages, ...programmingLanguages].map((lang, index) => (
+                  <LanguageIcon key={index} language={lang as keyof typeof LanguageIcons} />
+                ))}
+              </motion.div>
             </div>
 
             {/* Animation for larger screens */}
@@ -291,8 +287,8 @@ export default function Hero() {
               <div className="absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-gray-900 to-transparent z-10"></div>
             </div>
           </motion.div>
-        </motion.div>
-      </motion.div>
+                  </motion.div>
+                </motion.div>
 
       {/* CV Preview Modal - only rendered when needed for better performance */}
       {showCvPreview && (
