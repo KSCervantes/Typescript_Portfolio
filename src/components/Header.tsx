@@ -89,7 +89,7 @@ export default function Header() {
       className={`fixed w-full text-white shadow-xl py-3 sm:py-4 px-4 sm:px-6 z-50 transition-all duration-500 ${
         scrolled
           ? "bg-gradient-to-r from-gray-900/95 via-blue-950/95 to-black/95 backdrop-blur-md"
-          : "bg-gradient-to-r from-gray-900/80 via-blue-950/80 to-black/80 backdrop-blur-sm"
+          : "bg-transparent"
       }`}
     >
       <div className="max-w-6xl mx-auto flex justify-between items-center relative">
@@ -126,7 +126,7 @@ export default function Header() {
             </motion.div>
 
             <h1 className="text-xl sm:text-2xl font-bold tracking-wider">
-              <span className="text-white">MY</span>
+              <span className="text-white">KY</span>
               <motion.span
                 className="text-blue-400 ml-1 sm:ml-2"
                 animate={{
@@ -138,7 +138,7 @@ export default function Header() {
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                PORTFOLIO
+                LE
               </motion.span>
             </h1>
           </motion.div>
@@ -155,15 +155,32 @@ export default function Header() {
               initial="hidden"
               animate="visible"
               whileHover="hover"
-              className="font-medium relative group py-2 text-sm lg:text-base"
+              className="font-medium relative group py-2 text-sm lg:text-base flex items-center space-x-2"
             >
+              {/* Add icons here */}
+              <span className="inline-block opacity-70">
+                {item === "About" && (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                )}
+                {item === "Projects" && (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                  </svg>
+                )}
+                {item === "Contact" && (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                )}
+              </span>
               {item}
-              <motion.span
-                className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
-                initial={{ width: 0 }}
-                whileHover={{ width: "100%" }}
-                transition={{ duration: 0.3 }}
-              ></motion.span>
             </motion.a>
           ))}
         </nav>
