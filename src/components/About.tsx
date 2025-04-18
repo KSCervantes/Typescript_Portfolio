@@ -180,7 +180,7 @@ export default function About() {
                     <span className="w-4 h-4 text-blue-400 mr-2 flex items-center justify-center">
                       <span className="text-blue-400">🗣️</span>
                     </span>
-                    <span className="text-gray-300">languages</span>: [<span className="text-blue-200">'Filipino'</span>, <span className="text-blue-200">'English'</span>],
+                    <span className="text-gray-300">languages</span>:<span className="text-blue-200">'Filipino'</span>, <span className="text-blue-200">'English'</span>,
                   </div>
                   {/* Close object */}
                   <div>
